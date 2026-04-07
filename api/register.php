@@ -1,21 +1,21 @@
 <?php
 require_once "../config/db.php";
 
+session_start();
+
 $data = json_decode(file_get_contents("php://input"));
 
-// Проверка входных данных
 if (!isset($data->login, $data->password)) {
     echo json_encode(["error" => "Invalid input"]);
     exit;
 }
 
-// Валидация
 if (strlen($data->login) < 3 || strlen($data->password) < 5) {
     echo json_encode(["error" => "Login or password too short"]);
     exit;
 }
 
-// Проверка на существующего пользователя
+// проверка существования
 $stmt = $conn->prepare("SELECT id FROM users WHERE login = ?");
 $stmt->execute([$data->login]);
 
@@ -24,12 +24,17 @@ if ($stmt->fetch()) {
     exit;
 }
 
-// Хеширование пароля
+// хешируем пароль
 $hash = password_hash($data->password, PASSWORD_DEFAULT);
 
-// Создание пользователя
+// создаём пользователя
 $stmt = $conn->prepare("INSERT INTO users (login, password) VALUES (?, ?)");
 $stmt->execute([$data->login, $hash]);
 
-echo json_encode(["message" => "User registered"]);
+$user_id = $conn->lastInsertId();
+
+// авто-логин
+$_SESSION['user_id'] = $user_id;
+
+echo json_encode(["success" => true]);
 ?>
