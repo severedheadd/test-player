@@ -1,15 +1,16 @@
 <?php
 require_once "security.php";
 
-// Данные подключения из Railway (переменные окружения)
-$host = $_ENV['MYSQLHOST'];
-$db_name = $_ENV['MYSQLDATABASE'];
-$username = $_ENV['MYSQLUSER'];
-$password = $_ENV['MYSQLPASSWORD'];
+// получаем переменные окружения
+$host = getenv('MYSQLHOST');
+$db_name = getenv('MYSQLDATABASE');
+$username = getenv('MYSQLUSER');
+$password = getenv('MYSQLPASSWORD');
+$port = getenv('MYSQLPORT');
 
 try {
     $conn = new PDO(
-        "mysql:host=$host;dbname=$db_name;charset=utf8",
+        "mysql:host=$host;port=$port;dbname=$db_name;charset=utf8mb4",
         $username,
         $password,
         [

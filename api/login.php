@@ -1,6 +1,8 @@
 <?php
 require_once "../config/db.php";
 
+session_start();
+
 $data = json_decode(file_get_contents("php://input"));
 
 if (!isset($data->login, $data->password)) {
@@ -16,13 +18,13 @@ $user = $stmt->fetch();
 
 if ($user && password_verify($data->password, $user['password'])) {
 
-    // Защита от фиксации сессии
+    // защита от фиксации сессии
     session_regenerate_id(true);
 
-    // Сохраняем пользователя в сессии
+    // сохраняем пользователя
     $_SESSION['user_id'] = $user['id'];
 
-    // Генерация CSRF токена
+    // CSRF токен
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 
     echo json_encode([
