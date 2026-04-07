@@ -6,7 +6,7 @@ async function login() {
 
     const res = await fetch('/api/login.php', {
         method: 'POST',
-        credentials: 'include', // важно для сессий
+        credentials: 'include',
         headers: {
             'Content-Type': 'application/json'
         },
@@ -15,14 +15,16 @@ async function login() {
 
     const data = await res.json();
 
+    console.log(data); // 🔥 очень важно для отладки
+
     if (data.csrf_token) {
         csrfToken = data.csrf_token;
 
-        // сохраняем CSRF токен
         localStorage.setItem("csrf_token", csrfToken);
 
         window.location.href = "tests.html";
     } else {
-        document.getElementById("msg").innerText = "Ошибка входа";
+        document.getElementById("msg").innerText =
+            data.error || "Ошибка входа";
     }
 }
