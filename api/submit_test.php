@@ -20,16 +20,35 @@ if (!$test_id || !is_array($answers)) {
     exit;
 }
 
-$score = 0;
-
 // Подсчёт баллов
-foreach ($answers as $question_id => $answer_id) {
-    $stmt = $conn->prepare("SELECT is_correct FROM answers WHERE id = ?");
-    $stmt->execute([$answer_id]);
 
-    $row = $stmt->fetch();
-    if ($row && $row['is_correct']) {
-        $score++;
+$score = 0;
+$total = 0;
+
+foreach ($answers as $question_id => $answer_value) {
+
+    if (is_array($answer_value)) {
+        // multiple
+        foreach ($answer_value as $answer_id) {
+            $stmt = $conn->prepare("SELECT is_correct FROM answers WHERE id = ?");
+            $stmt->execute([$answer_id]);
+            $row = $stmt->fetch();
+
+            if ($row && $row['is_correct']) {
+                $score++;
+            }
+            $total++;
+        }
+    } else {
+        // single
+        $stmt = $conn->prepare("SELECT is_correct FROM answers WHERE id = ?");
+        $stmt->execute([$answer_value]);
+        $row = $stmt->fetch();
+
+        if ($row && $row['is_correct']) {
+            $score++;
+        }
+        $total++;
     }
 }
 

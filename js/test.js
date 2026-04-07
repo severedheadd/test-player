@@ -9,7 +9,6 @@ async function loadQuestions() {
 
     const data = await res.json();
 
-    // если не авторизован
     if (data.error) {
         window.location.href = "index.html";
         return;
@@ -25,14 +24,28 @@ async function loadQuestions() {
 
         q.answers.forEach(a => {
             const label = document.createElement("label");
-
             const input = document.createElement("input");
-            input.type = "radio";
+
+            // 🔥 ключевая логика
+            input.type = (q.type === "multiple") ? "checkbox" : "radio";
             input.name = "q" + q.question_id;
             input.value = a.id;
 
-            input.onclick = () => {
-                answers[q.question_id] = a.id;
+            input.onchange = () => {
+                if (q.type === "multiple") {
+                    if (!answers[q.question_id]) {
+                        answers[q.question_id] = [];
+                    }
+
+                    if (input.checked) {
+                        answers[q.question_id].push(a.id);
+                    } else {
+                        answers[q.question_id] =
+                            answers[q.question_id].filter(id => id !== a.id);
+                    }
+                } else {
+                    answers[q.question_id] = a.id;
+                }
             };
 
             label.appendChild(input);
@@ -66,7 +79,7 @@ async function submitTest() {
     const result = await res.json();
 
     if (result.error) {
-        document.getElementById("result").innerText = "Ошибка отправки";
+        document.getElementById("result").innerText = "Ошибка";
         return;
     }
 
