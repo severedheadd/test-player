@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Тест</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="container">
+    <h2>Прохождение теста</h2>
+
+    <div id="questions"></div>
+
+    <button onclick="submitTest()">Завершить тест</button>
+
+    <h3 id="result"></h3>
+
+    <button onclick="goBack()">Назад</button>
+</div>
+
+<script src="js/test.js"></script>
+
+<script>
+function goBack() {
+    window.location.href = "tests.html";
+}
+</script>
+
+</body>
+</html>

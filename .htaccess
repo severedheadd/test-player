@@ -1,0 +1,12 @@
+RewriteEngine On
+
+# Если файл или папка существует — отдать как есть
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# API маршруты
+RewriteRule ^api/(.*)$ api/$1 [L]
+
+# Всё остальное — на index.html (SPA fallback)
+RewriteRule ^ index.html [L]
